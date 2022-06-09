@@ -1,4 +1,4 @@
-module github.com/islamovz/hw01_hello_otus
+module github.com/islamovz/otus/hw01_hello_otus
 
 go 1.16
 
