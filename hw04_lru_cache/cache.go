@@ -1,5 +1,7 @@
 package hw04lrucache
 
+import "fmt"
+
 type Key string
 
 type Cache interface {
@@ -9,11 +11,24 @@ type Cache interface {
 }
 
 type lruCache struct {
-	Cache // Remove me after realization.
-
 	capacity int
 	queue    List
 	items    map[Key]*ListItem
+}
+
+func (*lruCache) Set(key Key, value interface{}) bool {
+	fmt.Println(key, value)
+	return true
+}
+
+func (*lruCache) Get(key Key) (interface{}, bool) {
+	fmt.Println(key)
+
+	return "asd", true
+}
+
+func (*lruCache) Clear() {
+	return
 }
 
 type cacheItem struct {
@@ -24,7 +39,7 @@ type cacheItem struct {
 func NewCache(capacity int) Cache {
 	return &lruCache{
 		capacity: capacity,
-		queue:    NewList(),
-		items:    make(map[Key]*ListItem, capacity),
+		queue:    nil, //NewList(),
+		items:    nil, //make(map[Key]*ListItem, capacity),
 	}
 }
