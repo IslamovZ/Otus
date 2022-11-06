@@ -1,6 +1,7 @@
 package hw04lrucache
 
 type List interface {
+	Show() []ListItem
 	Len() int
 	Front() *ListItem
 	Back() *ListItem
@@ -18,6 +19,10 @@ type ListItem struct {
 
 type list struct {
 	sliceWithItems []ListItem
+}
+
+func (l *list) Show() []ListItem {
+	return l.sliceWithItems
 }
 
 func (l *list) Len() int {
@@ -43,41 +48,56 @@ func (l *list) Back() *ListItem {
 }
 
 func (l *list) pushFrontNewItem(newItem *ListItem) {
-	length := l.Len()
-
-	if length > 0 {
-		next := &l.sliceWithItems[1]
-		next.Prev = newItem
-		newItem.Next = next
-	}
-
+	newItem.Prev = nil
 	l.sliceWithItems = append([]ListItem{*newItem}, l.sliceWithItems...)
+	l.setPointers(0, 1)
 }
 
 func (l *list) PushFront(v interface{}) *ListItem {
 	newItem := ListItem{Value: v}
 	l.pushFrontNewItem(&newItem)
-	return &newItem
+	return &l.sliceWithItems[0]
 }
 
 func (l *list) PushBack(v interface{}) *ListItem {
+	l.sliceWithItems = append(l.sliceWithItems, ListItem{Value: v})
+
 	length := l.Len()
-	newItem := ListItem{Value: v}
+	l.setPointers(length-2, length-1)
 
-	if length > 0 {
-		prev := &l.sliceWithItems[length-1]
-		prev.Next = &newItem
-		newItem.Prev = prev
-	}
-
-	l.sliceWithItems = append(l.sliceWithItems, newItem)
-	return &newItem
+	return &l.sliceWithItems[length-1]
 }
 
 func (l *list) removeByIndex(index int) {
 	copy(l.sliceWithItems[index:], l.sliceWithItems[index+1:])
-	// l.sliceWithItems[len(l.sliceWithItems)-1] = nil
 	l.sliceWithItems = l.sliceWithItems[:len(l.sliceWithItems)-1]
+	l.setPointers(index-1, index)
+	l.setPointers(index-2, index-1)
+	l.setPointers(index, index+1)
+}
+
+func (l *list) setPointers(firstIndex int, secondIndex int) {
+	length := l.Len()
+
+	if length == 0 {
+		return
+	}
+
+	var firstItem, secondItem *ListItem
+
+	if firstIndex >= 0 && firstIndex < length {
+		firstItem = &l.sliceWithItems[firstIndex]
+	}
+	if secondIndex >= 0 && secondIndex < length {
+		secondItem = &l.sliceWithItems[secondIndex]
+	}
+
+	if firstItem != nil {
+		firstItem.Next = secondItem
+	}
+	if secondItem != nil {
+		secondItem.Prev = firstItem
+	}
 }
 
 func (l *list) Remove(i *ListItem) {
