@@ -11,6 +11,8 @@ var taskWithAsteriskIsCompleted = false
 
 var textWithSpecialSymbols = "к а к как так так так как \n к к к,!к"
 
+var textWithDifferentWordsForms = "нога ногу ноги ноги Нога Ногу Ноги Ноги"
+
 var text = `Как видите, он  спускается  по  лестнице  вслед  за  своим
 другом   Кристофером   Робином,   головой   вниз,  пересчитывая
 ступеньки собственным затылком:  бум-бум-бум.  Другого  способа
@@ -51,14 +53,13 @@ func TestTop10(t *testing.T) {
 	})
 
 	t.Run("strange string with special symbols", func(t *testing.T) {
-		expected := []string{
-			"к",
-			"так",
-			"как",
-			"а",
-			"к,!к",
-		}
+		expected := []string{"к", "так", "как", "а", "к,!к"}
 		require.Equal(t, Top10(textWithSpecialSymbols), expected)
+	})
+
+	t.Run("check different forms of words and capital letters", func(t *testing.T) {
+		expected := []string{"Ноги", "ноги", "Нога", "Ногу", "нога", "ногу"}
+		require.Equal(t, Top10(textWithDifferentWordsForms), expected)
 	})
 
 	t.Run("positive test", func(t *testing.T) {

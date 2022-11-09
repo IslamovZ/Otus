@@ -1,7 +1,6 @@
 package hw03frequencyanalysis
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 )
@@ -11,31 +10,24 @@ type WordWithCount struct {
 	Count int
 }
 
-func (wwc *WordWithCount) IncreaseCount() {
-	if wwc == nil {
-		return
-	}
-
-	wwc.Count++
-}
-
-func Top10(bigText string) []string {
-	words := strings.Fields(bigText)
-	wordsWithCounts := make([]WordWithCount, 0)
+func Top10(inputText string) []string {
+	words := strings.Fields(inputText)
+	wordsCounts := make(map[string]int)
 
 	for _, word := range words {
-		founded := false
-		for i, v := range wordsWithCounts {
-			if v.Word == word {
-				wordsWithCounts[i].IncreaseCount()
-				founded = true
-				break
-			}
-		}
+		count, ok := wordsCounts[word]
 
-		if !founded {
-			wordsWithCounts = append(wordsWithCounts, WordWithCount{word, 1})
+		if ok {
+			wordsCounts[word] = count + 1
+		} else {
+			wordsCounts[word] = 1
 		}
+	}
+
+	wordsWithCounts := make([]WordWithCount, 0)
+
+	for key, count := range wordsCounts {
+		wordsWithCounts = append(wordsWithCounts, WordWithCount{Word: key, Count: count})
 	}
 
 	sort.Slice(wordsWithCounts, func(i, j int) bool {
@@ -55,6 +47,5 @@ func Top10(bigText string) []string {
 		result = append(result, wordsWithCounts[i].Word)
 	}
 
-	fmt.Println(result)
 	return result
 }
